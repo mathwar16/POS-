@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Settings - M-POS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .reports-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .small {
+            padding: 0.5rem !important;
+            font-size: 0.85rem !important;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow-xl);
+            z-index: 1000;
+            transition: all 0.3s;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            background: #10b981;
+            border-left: 4px solid #059669;
+        }
+
+        .toast.error {
+            background: #ef4444;
+            border-left: 4px solid #dc2626;
+        }
+
+        .toast.hidden {
+            opacity: 0;
+            transform: translateY(100%);
+            pointer-events: none;
+        }
+
+        /* Settings Layout */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .setting-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .setting-info strong {
+            display: block;
+            font-size: 1.1rem;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .setting-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .input-with-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .small-input {
+            width: 60px;
+            padding: 0.4rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .save-settings-row {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* Switch Style */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #334155;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Table Icons */
+        .action-icon {
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .action-icon:hover {
+            color: var(--primary);
+        }
+
+        .run-icon {
+            color: #10b981;
+        }
+
+        .run-icon:hover {
+            color: #059669;
+        }
+
+        .refined-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <h2 class="logo">M-POS</h2>
+        <nav>
+            <a href="index.html">POS</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="expenses.html">Expenses</a>
+            <a href="products.html">Products</a>
+            <a class="active">Reports</a>
+            <a href="transactions.html">Transactions</a>
+            <div class="profile-container">
+                <div class="profile-icon" id="profileIcon">👤</div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="dropdown-item" id="userNameDisplay">Name</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" onclick="logout()">Logout</div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="reports-container">
+        <div id="settingsSection">
+            <div class="reports-header">
+                <h1>Report Configuration</h1>
+            </div>
+
+            <!-- Global Tax & Charges Configuration -->
+            <section class="dashboard-section">
+                <div class="section-header-row">
+                    <h2>Tax, Charges & Restaurant Details</h2>
+                </div>
+                <div class="settings-grid">
+                    <div class="setting-card">
+                        <div class="setting-info">
+                            <strong>GST Configuration</strong>
+                            <p class="description">Enable or disable GST globally</p>
+                        </div>
+                        <div class="setting-controls">
+                            <label class="switch">
+                                <input type="checkbox" id="gstEnabled">
+                                <span class="slider round"></span>
+                            </label>
+                            <div class="input-with-label">
+                                <input type="number" id="gstPercentage" placeholder="5" class="small-input text-input">
+                                <span>%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-card">
+                        <div class="setting-info">
+                            <strong>Service Charges</strong>
+                            <p class="description">Enable or disable service charges</p>
+                        </div>
+                        <div class="setting-controls">
+                            <label class="switch">
+                                <input type="checkbox" id="serviceEnabled">
+                                <span class="slider round"></span>
+                            </label>
+                            <div class="input-with-label">
+                                <input type="number" id="servicePercentage" placeholder="5"
+                                    class="small-input text-input">
+                                <span>%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Restaurant Details Section -->
+                <div class="dashboard-section" style="margin-top: 2rem;">
+                    <div class="section-header-row">
+                        <h2>Restaurant Details</h2>
+                        <p class="description" style="color: var(--text-muted);">These details appear at the top of every bill/receipt</p>
+                    </div>
+                    <div class="settings-grid" style="grid-template-columns: 1fr;">
+                        <div class="setting-card" style="flex-direction: column; align-items: flex-start; gap: 1rem;">
+                            <div class="setting-info" style="width: 100%;">
+                                <strong>Restaurant Information</strong>
+                                <p class="description">Configure your restaurant name, address, and phone number</p>
+                            </div>
+                            <div style="width: 100%; display: flex; flex-direction: column; gap: 1rem;">
+                                <input type="text" id="restaurantName" placeholder="Restaurant Name" class="search-input" style="width: 100%; padding: 0.875rem 1rem; font-size: 1rem;">
+                                <textarea id="restaurantAddress" placeholder="Address" class="search-input" style="width: 100%; padding: 0.875rem 1rem; font-size: 1rem; min-height: 80px; resize: vertical; font-family: inherit;"></textarea>
+                                <input type="text" id="restaurantPhone" placeholder="Phone Number" class="search-input" style="width: 100%; padding: 0.875rem 1rem; font-size: 1rem;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="save-settings-row"
+                    style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                    <div class="input-group"
+                        style="display: flex; gap: 0.5rem; align-items: center; margin-right: auto;">
+                        <input type="text" id="reportEmails" placeholder="Recipients (comma-separated)"
+                            class="search-input" style="width: 300px;">
+                        <button onclick="saveEmails()" class="add-btn small">Save Emails</button>
+                    </div>
+                    <button onclick="saveGeneralSettings()" class="add-btn">Save Tax Settings</button>
+                </div>
+            </section>
+
+            <!-- Order Report Schedules -->
+            <section class="dashboard-section">
+                <div class="section-header-row">
+                    <h2>Order Report Schedules</h2>
+                    <p class="description" style="color: var(--text-muted); margin-bottom: 1rem;">Configure when order
+                        summaries are sent to your email.</p>
+                </div>
+                <div class="table-container">
+                    <table class="refined-table">
+                        <thead>
+                            <tr>
+                                <th>Frequency</th>
+                                <th>Status</th>
+                                <th>Details</th>
+                                <th>Scheduled Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderSchedulesTable">
+                            <!-- JS injected -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Expense Report Schedules -->
+            <section class="dashboard-section" style="margin-top: 3rem;">
+                <div class="section-header-row">
+                    <h2>Expense Report Schedules</h2>
+                    <p class="description" style="color: var(--text-muted); margin-bottom: 1rem;">Configure when expense
+                        summaries are sent to your email.</p>
+                </div>
+                <div class="table-container">
+                    <table class="refined-table">
+                        <thead>
+                            <tr>
+                                <th>Frequency</th>
+                                <th>Status</th>
+                                <th>Details</th>
+                                <th>Scheduled Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenseSchedulesTable">
+                            <!-- JS injected -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/reports.js"></script>
+</body>
+
+</html>

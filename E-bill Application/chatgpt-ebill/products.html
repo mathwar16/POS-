@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Products - M-POS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <header class="navbar">
+    <h2 class="logo">M-POS</h2>
+    <nav>
+      <a href="index.html">POS</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="expenses.html">Expenses</a>
+      <a class="active">Products</a>
+      <a href="reports.html">Reports</a>
+      <a href="transactions.html">Transactions</a>
+      <div class="profile-container">
+        <div class="profile-icon" id="profileIcon">👤</div>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="dropdown-item" id="userNameDisplay">Name</div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="logout()">Logout</div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="products-container">
+    <div class="products-header">
+      <h1>Products</h1>
+      <div class="header-actions">
+        <button onclick="showAddProductModal()" class="add-btn">
+          <span></span> Add Product
+        </button>
+        <button onclick="showManageCategoriesModal()" class="add-btn secondary">
+          <span>📁</span> Manage Categories
+        </button>
+      </div>
+    </div>
+
+    <div class="search-wrapper">
+      <input type="text" placeholder="Search products..." id="searchProducts" class="search-input">
+    </div>
+
+    <div id="productsList" class="products-grid"></div>
+  </main>
+
+  <!-- Add Product Modal -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">📦 Add Product</h3>
+        <span class="close" onclick="closeProductModal()">&times;</span>
+      </div>
+      <form id="productForm">
+        <input type="hidden" id="productId">
+        <div class="input-group">
+          <label for="productName">Product Name</label>
+          <input type="text" id="productName" placeholder="Enter product name" required>
+        </div>
+        <div class="input-group">
+          <label for="productPrice">Price (₹)</label>
+          <input type="number" id="productPrice" placeholder="Enter price" step="0.01" required>
+        </div>
+        <div class="input-group">
+          <label for="productCategory">Category</label>
+          <select id="productCategory" required></select>
+        </div>
+        <input type="hidden" id="productIsFavorite" value="false">
+        <div class="modal-buttons">
+          <button type="submit" class="save-btn">Save</button>
+          <button type="button" onclick="closeProductModal()" class="close-btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Category Management Modal -->
+  <div id="categoryModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="categoryModalTitle">📁 Manage Categories</h3>
+        <span class="close" onclick="closeManageCategoriesModal()">&times;</span>
+      </div>
+      <div class="category-manager">
+        <div class="input-group" style="margin-bottom: 1.5rem;">
+          <label>Add New Category</label>
+          <div style="display: flex; gap: 0.75rem;">
+            <input type="text" id="newCategoryName" placeholder="e.g. Beverages" style="flex: 1;">
+            <button onclick="handleAddCategory()" class="add-btn"
+              style="padding: 0 1.5rem; border-radius: 0.75rem;">Add</button>
+          </div>
+        </div>
+        <div id="categoryListContainer" style="max-height: 200px; overflow-y: auto; margin-bottom: 1rem;">
+          <!-- Category items will be rendered here -->
+        </div>
+      </div>
+      <div class="modal-buttons">
+        <button type="button" onclick="closeManageCategoriesModal()" class="close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/products.js"></script>
+</body>
+
+</html>

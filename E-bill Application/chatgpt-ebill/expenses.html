@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expenses - RestoPOS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <h2 class="logo">RestoPOS</h2>
+        <nav>
+            <a href="index.html">POS</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a class="active">Expenses</a>
+            <a href="products.html">Products</a>
+            <a href="reports.html">Reports</a>
+            <a href="transactions.html">Transactions</a>
+            <div class="profile-container">
+                <div class="profile-icon" id="profileIcon">👤</div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="dropdown-item" id="userNameDisplay">Name</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" onclick="logout()">Logout</div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="dashboard-container">
+        <div class="dashboard-controls">
+            <h1>Expense Management</h1>
+            <button onclick="openAddExpenseModal()" class="primary-btn">
+                <span class="material-icons" style="font-size: 1.2rem; vertical-align: middle;">add</span>
+                Add Expense
+            </button>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Filtered Range Total</div>
+                <p class="stat-value" id="filteredTotal" style="color: var(--primary-light);">₹0</p>
+                <div class="stat-subvalue">Based on filters</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Today's Expenses</div>
+                <p class="stat-value" id="todayExpense">₹0</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">This Month</div>
+                <p class="stat-value" id="monthExpense">₹0</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Top Category (Month)</div>
+                <p class="stat-value" id="topCategoryName" style="font-size: 1.5rem;">--</p>
+                <div class="stat-subvalue" id="topCategoryAmount">₹0</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="dashboard-section"
+            style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+            <div class="input-group" style="margin-bottom: 0; flex: 1; min-width: 200px;">
+                <label style="margin-bottom: 0.25rem;">Category</label>
+                <select id="expenseCategoryFilter" class="filter-select" onchange="loadExpenses(1)"
+                    style="width: 100%;">
+                    <option value="">All Categories</option>
+                    <!-- Injected JS -->
+                </select>
+            </div>
+            <div class="input-group" style="margin-bottom: 0;">
+                <label style="margin-bottom: 0.25rem;">From Date</label>
+                <input type="date" id="startDateFilter" class="filter-select" style="padding: 0.6rem;">
+            </div>
+            <div class="input-group" style="margin-bottom: 0;">
+                <label style="margin-bottom: 0.25rem;">To Date</label>
+                <input type="date" id="endDateFilter" class="filter-select" style="padding: 0.6rem;">
+            </div>
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
+                <button onclick="loadDashboard()" class="primary-btn" style="padding: 0.6rem 1rem;">Apply</button>
+                <button onclick="clearFilters()" class="page-btn" style="padding: 0.6rem 1rem;">Clear</button>
+            </div>
+            <div style="margin-left: auto; margin-top: 1.25rem;">
+                <button onclick="openAddCategoryModal()" class="page-btn" style="font-size: 0.9rem;">+ Manage
+                    Categories</button>
+            </div>
+        </div>
+
+        <!-- Expenses Table -->
+        <div class="dashboard-section">
+            <div class="table-container" style="background: rgba(30, 41, 59, 0.4); border-radius: 1rem; padding: 1rem;">
+                <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="text-align: left; color: var(--text-muted); border-bottom: 1px solid var(--border);">
+                            <th style="padding: 1rem;">Date</th>
+                            <th style="padding: 1rem;">Category</th>
+                            <th style="padding: 1rem;">Description</th>
+                            <th style="padding: 1rem;">Vendor</th>
+                            <th style="padding: 1rem;">Method</th>
+                            <th style="padding: 1rem;">Amount</th>
+                            <th style="padding: 1rem; text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expensesTableBody">
+                        <!-- JS injected -->
+                    </tbody>
+                </table>
+                <div id="pagination" class="pagination" style="margin-top: 1rem; justify-content: center;"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Expense Modal -->
+    <div id="addExpenseModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Add New Expense</h3>
+                <span class="close" onclick="closeAddExpenseModal()">&times;</span>
+            </div>
+            <form id="addExpenseForm" onsubmit="handleExpenseSubmit(event)">
+                <div class="form-group">
+                    <label>Amount (₹)</label>
+                    <input type="number" step="0.01" id="expenseAmount" required min="0.1" class="search-bar"
+                        style="width: 100%; margin-bottom: 1rem; font-size: 1.2rem; font-weight: bold;">
+                </div>
+
+                <div class="form-group">
+                    <label>Date & Time</label>
+                    <input type="datetime-local" id="expenseDate" required class="search-bar"
+                        style="width: 100%; margin-bottom: 1rem;">
+                </div>
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="expenseCategory" required class="filter-select"
+                        style="width: 100%; margin-bottom: 1rem; padding: 0.75rem;">
+                        <!-- JS Injected -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Mode</label>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="paymentMode" value="Cash" checked> Cash
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="paymentMode" value="UPI"> UPI
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="paymentMode" value="Bank Transfer"> Bank
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="paymentMode" value="Petty Cash"> Petty Cash
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description / Note</label>
+                    <input type="text" id="expenseNote" class="search-bar" style="width: 100%; margin-bottom: 1rem;"
+                        placeholder="e.g. Tomato 5kg">
+                </div>
+
+                <div class="form-group">
+                    <label>Vendor Name (Optional)</label>
+                    <input type="text" id="expenseVendor" class="search-bar" style="width: 100%; margin-bottom: 1rem;">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" onclick="closeAddExpenseModal()" class="page-btn">Cancel</button>
+                    <button type="submit" class="primary-btn">Save Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div id="addCategoryModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>Manage Categories</h3>
+                <span class="close" onclick="closeAddCategoryModal()">&times;</span>
+            </div>
+            <div class="form-group">
+                <label>New Category Name</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="text" id="newCategoryName" class="search-bar" style="flex: 1;"
+                        placeholder="Category Name">
+                    <button onclick="createCategory()" class="add-btn small" style="height: 100%;">Add</button>
+                </div>
+            </div>
+            <div style="margin-top: 1.5rem;">
+                <h4>Existing Categories</h4>
+                <ul id="categoryList"
+                    style="list-style: none; padding: 0; margin-top: 0.5rem; max-height: 200px; overflow-y: auto;">
+
+                </ul>
+            </div>
+            <div class="modal-actions">
+                <button onclick="closeAddCategoryModal()" class="page-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/expenses.js"></script>
+</body>
+
+</html>

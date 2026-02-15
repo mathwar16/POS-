@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M-POS</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <header class="navbar">
+    <h2 class="logo">M-POS</h2>
+    <nav>
+      <a href="index.html">POS</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="expenses.html">Expenses</a>
+      <a href="products.html">Products</a>
+      <a href="reports.html">Reports</a>
+      <a href="transactions.html">Transactions</a>
+      <div class="profile-container">
+        <div class="profile-icon" id="profileIcon">👤</div>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="dropdown-item" id="userNameDisplay">Name</div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="logout()">Logout</div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="pos-container">
+
+    <!-- Products -->
+    <section class="menu">
+      <div class="search-wrapper">
+        <input type="text" placeholder="Search menu items..." id="searchMenu" class="search-input">
+      </div>
+
+      <div id="categoryNav" class="category-nav"></div>
+
+      <div id="favoritesSection" class="favorites-section hidden">
+        <div class="section-header">
+          <span>⭐</span> Popular Items
+        </div>
+        <div id="favoritesGrid" class="favorites-grid"></div>
+      </div>
+
+      <div id="productGrid" class="grid"></div>
+    </section>
+
+    <!-- Billing -->
+    <aside class="bill">
+      <h3>Current Order</h3>
+
+      <div id="billItems" class="bill-items"></div>
+
+      <div class="customer-section">
+        <div class="section-title">
+          <span>👤</span> Customer Details
+        </div>
+        <div class="input-group">
+          <label for="customerName">Name</label>
+          <input type="text" id="customerName" placeholder="Enter customer name">
+        </div>
+        <div class="input-group">
+          <label for="customerPhone">Phone / WhatsApp</label>
+          <input type="tel" id="customerPhone" placeholder="Enter phone number">
+        </div>
+      </div>
+
+      <div class="summary">
+        <p>Subtotal <span id="subTotal">₹0</span></p>
+        <p id="gstRow">GST (<span id="gstPercentLabel">5</span>%) <span id="gst">₹0</span></p>
+        <p id="serviceRow">Service (<span id="servicePercentLabel">5</span>%) <span id="service">₹0</span></p>
+        <h2>Total <span id="total">₹0</span></h2>
+      </div>
+
+      <div class="payment">
+        <button onclick="generateBill('CASH')" class="pay-btn cash">Cash</button>
+        <button onclick="generateBill('UPI')" class="pay-btn upi">UPI</button>
+        <button onclick="generateBill('CARD')" class="pay-btn card">Card</button>
+        <div class="platform-btns">
+          <button onclick="setPlatform('Direct')" class="platform-btn active" id="platform-Direct">Direct</button>
+          <button onclick="setPlatform('Zomato')" class="platform-btn" id="platform-Zomato">Zomato</button>
+          <button onclick="setPlatform('Swiggy')" class="platform-btn" id="platform-Swiggy">Swiggy</button>
+        </div>
+        <button onclick="clearCart()" class="pay-btn clear">Clear</button>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Bill Preview -->
+  <div id="billModal" class="modal">
+    <div class="bill-preview">
+      <div class="PaymentClass">
+        <h3>Bill Preview</h3>
+        <pre id="billText"></pre>
+      </div>
+      <div class="modal-buttons">
+        <button onclick="printBill()" class="print-btn">Print</button>
+        <button onclick="closeModal()" class="close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/pos.js"></script>
+</body>
+
+</html>

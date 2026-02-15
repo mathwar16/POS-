@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - M-POS</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header class="navbar">
+        <h2 class="logo">M-POS</h2>
+        <nav id="main-nav">
+            <!-- Injected by common logic or manually added -->
+            <a href="index.html">POS</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="expenses.html">Expenses</a>
+            <a href="products.html">Products</a>
+            <a href="reports.html">Reports</a>
+            <a class="active">Transactions</a>
+            <div class="profile-container">
+                <div class="profile-icon" id="profileIcon">👤</div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="dropdown-item" id="userNameDisplay">Name</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" onclick="logout()">Logout</div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="reports-container">
+        <div class="reports-header transactions-header">
+            <h1>Transaction History</h1>
+            <div class="history-filters">
+                <input type="date" id="historyStartDate" class="date-input">
+                <input type="date" id="historyEndDate" class="date-input">
+                <button onclick="loadTransactions()" class="page-btn">Filter</button>
+                <button onclick="exportTransactions()" class="add-btn small">Export</button>
+            </div>
+        </div>
+        <div class="table-container" style="background: rgba(30, 41, 59, 0.4); border-radius: 1rem; padding: 1rem;">
+            <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="text-align: left; color: var(--text-muted); border-bottom: 1px solid var(--border);">
+                        <th style="padding: 1rem;">Bill #</th>
+                        <th style="padding: 1rem;">Time</th>
+                        <th style="padding: 1rem;">Platform</th>
+                        <th style="padding: 1rem;">Method</th>
+                        <th style="padding: 1rem;">Items</th>
+                        <th style="padding: 1rem;">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionsTable">
+                    <!-- JS injected -->
+                </tbody>
+            </table>
+            <div id="historyPagination" class="pagination" style="margin-top: 1rem; justify-content: center;"></div>
+        </div>
+    </main>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/transactions.js"></script>
+</body>
+
+</html>
